@@ -136,7 +136,8 @@ h3{ font-size:clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem); line-height:1; }
   background:rgba(248,239,231,.82); -webkit-backdrop-filter:blur(14px) saturate(1.2); backdrop-filter:blur(14px) saturate(1.2);
   box-shadow:0 1px 0 var(--line);
 }
-.top-in{ width:var(--wrap); margin-inline:auto; display:flex; align-items:center; gap:24px; }
+.top-in{ width:var(--wrap); margin-inline:auto; display:flex; align-items:center; gap:10px; }
+@media (min-width:640px){ .top-in{ gap:18px; } }
 .brand{ display:flex; flex-direction:column; text-decoration:none; line-height:.8; color:var(--choco); margin-right:auto; }
 .brand b{ font-family:'Allura', cursive; font-weight:400; font-size:2.15rem; line-height:.9; }
 .brand small{ font-family:'Allura', cursive; font-size:1.05rem; color:var(--mousse); padding-left:2.2em; margin-top:-.15em; }
@@ -162,11 +163,40 @@ h3{ font-size:clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem); line-height:1; }
 .menu-btn i span{ margin:0; }
 .menu-open .menu-btn i span:first-child{ transform:translateY(3.5px) rotate(45deg); }
 .menu-open .menu-btn i span:last-child{ transform:translateY(-3.5px) rotate(-45deg); }
+@media (max-width:519px){ .brand b{ font-size:1.85rem; } .brand small{ font-size:.95rem; } }
+@media (max-width:359px){ .top-cta-short{ display:none !important; } }
 .top-cta-short{ display:inline-flex; }
 .top-cta-long{ display:none; }
-@media (min-width:980px){
+@media (min-width:1080px){
   .nav{ display:flex; }
   .menu-btn{ display:none; }
+}
+
+/* language switcher */
+.lang{ position:relative; }
+.lang-btn{
+  display:inline-flex; align-items:center; gap:6px; height:44px; padding:0 10px 0 12px; border-radius:12px; cursor:pointer;
+  border:1px solid var(--line); background:rgba(255,250,246,.6); font-weight:600; font-size:.9rem; letter-spacing:.03em;
+  transition:background-color .3s;
+}
+.lang-btn:hover{ background:rgba(255,250,246,.9); }
+.lang-btn svg{ width:14px; height:14px; transition:transform .4s var(--ease); }
+.lang-btn[aria-expanded="true"] svg{ transform:rotate(180deg); }
+.lang-menu{
+  position:absolute; right:0; top:calc(100% + 8px); z-index:60; min-width:178px; padding:6px; list-style:none;
+  background:#FFFAF6; border-radius:14px; box-shadow:0 0 0 1px var(--line), 0 24px 40px -18px rgba(56,35,29,.55);
+  transform-origin:100% 0; animation:langIn .35s var(--ease);
+}
+@keyframes langIn{ from{ opacity:0; transform:translateY(-6px) scale(.97); } }
+.lang-menu button{
+  width:100%; display:flex; align-items:center; gap:10px; padding:10px 12px; border:0; border-radius:10px; background:none; cursor:pointer; text-align:left; font-size:.95rem;
+}
+.lang-menu button:hover, .lang-menu button:focus-visible{ background:var(--oat); }
+.lang-menu b{ font-size:.75rem; letter-spacing:.06em; color:var(--mousse); width:22px; }
+.lang-menu button[aria-current="true"]{ font-weight:600; }
+.lang-menu button[aria-current="true"]::after{
+  content:""; margin-left:auto; width:9px; height:11px; background:var(--mousse);
+  border-radius:50% 50% 50% 50% / 62% 62% 38% 38%; transform:rotate(180deg);
 }
 @media (min-width:520px){ .top-cta-short{ display:none; } .top-cta-long{ display:inline-flex; } }
 
@@ -316,8 +346,11 @@ body.menu-open{ overflow:hidden; }
 }
 .fan.settled .blade{ transition-delay:0s; transition-duration:.6s; }
 .fan.is-open .blade{ transform:rotate(calc((var(--i) - 3) * var(--step))); }
-.fan.is-open .blade:hover{ transform:rotate(calc((var(--i) - 3) * var(--step))) translateY(-10px); }
-.fan.is-open .blade[aria-selected="true"]{ transform:rotate(calc((var(--i) - 3) * var(--step))) translateY(-24px); z-index:20; box-shadow:inset 0 0 0 1px rgba(255,255,255,.4), 0 22px 34px -16px rgba(56,35,29,.55); }
+.fan.is-open .blade:hover{ transform:rotate(calc((var(--i) - 3) * var(--step))) translateY(-8px); }
+/* selected blade keeps its place in the stack: it only slides out a little and gets a ring */
+.fan.is-open .blade[aria-selected="true"]{ transform:rotate(calc((var(--i) - 3) * var(--step))) translateY(-18px); }
+.blade[aria-selected="true"]{ outline:2px solid rgba(74,47,39,.62); outline-offset:3px; }
+.blade:focus-visible{ outline:2px solid var(--choco); outline-offset:3px; border-radius:12px; }
 .blade-n{ display:block; align-self:flex-start; padding-left:calc(var(--bw) * .3 - .55em); font-weight:700; font-size:clamp(.78rem, .7rem + .35vw, .98rem); letter-spacing:.02em; opacity:.85; }
 .blade-name{
   position:absolute; top:clamp(42px, 8vw, 56px); left:calc(var(--bw) * .3); transform:translateX(-50%) rotate(180deg);
@@ -586,6 +619,17 @@ body.menu-open{ overflow:hidden; }
       <li><a href="#capas">Capa a capa</a></li>
       <li><a href="#visita">Visítanos</a></li>
     </ul>
+    <div class="lang" id="lang">
+      <button class="lang-btn" type="button" aria-expanded="false" aria-controls="langMenu" aria-label="Idioma: Español">
+        <span class="lang-cur">ES</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <ul class="lang-menu" id="langMenu" hidden>
+        <li><button type="button" data-lang="es" lang="es" aria-current="true"><b>ES</b>Español</button></li>
+        <li><button type="button" data-lang="en" lang="en" aria-current="false"><b>EN</b>English</button></li>
+        <li><button type="button" data-lang="fr" lang="fr" aria-current="false"><b>FR</b>Français</button></li>
+      </ul>
+    </div>
     <a class="btn btn-gel top-cta-long" href="https://wa.me/34642447896" data-wa="¡Hola Melanie! Me gustaría pedir cita." target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2Z"/><path d="M9 8.3c.2-.4.5-.5.8-.5h.5l1 2.1-.7.9c.5 1.1 1.4 2 2.5 2.5l.9-.7 2.1 1v.5c0 .3-.1.6-.5.8-.6.4-1.5.5-2.4.1a8 8 0 0 1-4.3-4.3c-.4-.9-.3-1.8.1-2.4Z"/></svg>
       Pide tu cita
@@ -961,7 +1005,31 @@ body.menu-open{ overflow:hidden; }
   const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const WA = '34642447896';
   const waLink = (msg) => `https://wa.me/${WA}?text=${encodeURIComponent(msg)}`;
-  d.querySelectorAll('[data-wa]').forEach(a => { a.href = waLink(a.dataset.wa); });
+  const applyWa = () => d.querySelectorAll('[data-wa]').forEach(a => { a.href = waLink(a.dataset.wa); });
+  applyWa();
+
+  /* strings built in JS, per language (page text lives in I18N further down) */
+  let lang = 'es';
+  const UI = {
+    es: {
+      title: 'Melanie.Art · Nails & Beauty en Lloret de Mar',
+      desc: 'Manicura, pedicura, semipermanente con base rubber, extensiones de gel, nail art, lifting de pestañas y laminación de cejas en C/ Carme 10, Lloret de Mar. Pide tu cita por WhatsApp.',
+      menuOpen: 'Abrir menú', menuClose: 'Cerrar menú', view: 'Ver en grande: ', langLabel: 'Idioma: Español',
+      lbMsg: (n) => `¡Hola Melanie! Me encanta el diseño «${n}» de vuestra web. ¿Me das cita?`
+    },
+    en: {
+      title: 'Melanie.Art · Nails & Beauty in Lloret de Mar',
+      desc: 'Manicure, pedicure, gel polish with rubber base, gel extensions, nail art, lash lift and brow lamination at C/ Carme 10, Lloret de Mar. Book on WhatsApp.',
+      menuOpen: 'Open menu', menuClose: 'Close menu', view: 'View larger: ', langLabel: 'Language: English',
+      lbMsg: (n) => `Hi Melanie! I love the “${n}” design on your website. Could I book an appointment?`
+    },
+    fr: {
+      title: 'Melanie.Art · Nails & Beauty à Lloret de Mar',
+      desc: 'Manucure, pédicure, semi-permanent avec base rubber, extensions en gel, nail art, rehaussement de cils et lamination des sourcils au C/ Carme 10, Lloret de Mar. Réservez sur WhatsApp.',
+      menuOpen: 'Ouvrir le menu', menuClose: 'Fermer le menu', view: 'Agrandir : ', langLabel: 'Langue : Français',
+      lbMsg: (n) => `Bonjour Melanie ! J'adore la création « ${n} » de votre site. Puis-je prendre rendez-vous ?`
+    }
+  };
 
   /* ---------- header + menu ---------- */
   const top = d.getElementById('top');
@@ -971,7 +1039,7 @@ body.menu-open{ overflow:hidden; }
     top.classList.toggle('menu-open', open);
     d.body.classList.toggle('menu-open', open);
     menuBtn.setAttribute('aria-expanded', open);
-    menuBtn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    menuBtn.setAttribute('aria-label', open ? UI[lang].menuClose : UI[lang].menuOpen);
     sheet.setAttribute('aria-hidden', !open);
   };
   menuBtn.addEventListener('click', () => setMenu(!d.body.classList.contains('menu-open')));
@@ -1086,7 +1154,6 @@ body.menu-open{ overflow:hidden; }
     const shot = t.querySelector('.shot'), img = shot.querySelector('img');
     shot.insertAdjacentHTML('beforeend', '<span class="lens" aria-hidden="true"></span>');
     const lens = shot.querySelector('.lens');
-    shot.setAttribute('aria-label', `Ver en grande: ${t.dataset.name}`);
     if (finePointer) {
       shot.addEventListener('pointerenter', () => { lens.style.backgroundImage = `url("${img.currentSrc || img.src}")`; shot.classList.add('lensing'); });
       shot.addEventListener('pointermove', (e) => { const r = shot.getBoundingClientRect(); lensPlace(shot, img, lens, e.clientX - r.left, e.clientY - r.top, 2.3); });
@@ -1094,6 +1161,8 @@ body.menu-open{ overflow:hidden; }
     }
     shot.addEventListener('click', () => openLb(t));
   });
+  const labelShots = () => tiles.forEach(t => t.querySelector('.shot').setAttribute('aria-label', UI[lang].view + t.dataset.name));
+  labelShots();
 
   d.querySelectorAll('.chip').forEach(chip => chip.addEventListener('click', () => {
     d.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c === chip));
@@ -1122,15 +1191,15 @@ body.menu-open{ overflow:hidden; }
   const lb = d.getElementById('lb'), lbImg = d.getElementById('lbImg'), lbMedia = d.getElementById('lbMedia');
   const lbLens = lbMedia.querySelector('.lens');
   const tagNames = { nude: 'Nude & milky', ombre: 'Ombré', pastel: 'Pastel', intenso: 'Intensos', arte: 'Arte a mano', mirada: 'Mirada' };
-  let lbIndex = 0;
+  let lbIndex = 0, tr = (s) => s;
   const visibleTiles = () => tiles.filter(t => !t.hidden);
   const fillLb = (t) => {
     const img = t.querySelector('img');
     lbImg.src = img.src; lbImg.alt = img.alt;
     d.getElementById('lbTitle').textContent = t.dataset.name;
     d.getElementById('lbDesc').textContent = t.dataset.desc;
-    d.getElementById('lbTags').innerHTML = t.dataset.tags.split(' ').map(k => `<span>${tagNames[k]}</span>`).join('');
-    d.getElementById('lbCta').href = waLink(`¡Hola Melanie! Me encanta el diseño «${t.dataset.name}» de vuestra web. ¿Me das cita?`);
+    d.getElementById('lbTags').innerHTML = t.dataset.tags.split(' ').map(k => `<span>${tr(tagNames[k])}</span>`).join('');
+    d.getElementById('lbCta').href = waLink(UI[lang].lbMsg(t.dataset.name));
     lbLens.style.backgroundImage = `url("${img.src}")`;
     lbIndex = visibleTiles().indexOf(t);
   };
@@ -1164,6 +1233,279 @@ body.menu-open{ overflow:hidden; }
   };
   const stepIO = new IntersectionObserver((es) => es.forEach(e => { if (e.isIntersecting) setStep(+e.target.dataset.step); }), { rootMargin: '-46% 0px -46% 0px' });
   steps.forEach(s => stepIO.observe(s));
+
+  /* ---------- languages: ES (source text in the HTML) · EN · FR ----------
+     Keys are the exact Spanish strings as written in the page (text or attributes).
+     If you edit a Spanish text above, update its key here too. */
+  const I18N = {
+    // navigation & header
+    "Saltar al contenido": ["Skip to content", "Aller au contenu"],
+    "Melanie.Art, inicio": ["Melanie.Art, home", "Melanie.Art, accueil"],
+    "Inicio": ["Home", "Accueil"],
+    "Servicios": ["Services", "Services"],
+    "Muestrario": ["Gallery", "Galerie"],
+    "Capa a capa": ["Layer by layer", "Couche par couche"],
+    "Visítanos": ["Visit us", "Nous trouver"],
+    "Secciones": ["Sections", "Sections"],
+    "Pide tu cita": ["Book now", "Réserver"],
+    "Cita": ["Book", "RDV"],
+    "Escribir por WhatsApp": ["Message us on WhatsApp", "Écrire sur WhatsApp"],
+    "¡Hola Melanie! Me gustaría pedir cita.": ["Hi Melanie! I'd like to book an appointment.", "Bonjour Melanie ! J'aimerais prendre rendez-vous."],
+    // hero
+    "Nails & Beauty en Lloret de Mar": ["Nails & Beauty in Lloret de Mar", "Nails & Beauty à Lloret de Mar"],
+    "Bonitas de lejos.": ["Lovely from afar.", "Belles de loin."],
+    "Perfectas de": ["Flawless up", "Parfaites de"],
+    "cerca.": ["close.", "près."],
+    "Manicura, pedicura y mirada en un estudio pequeño de Lloret de Mar. Base rubber, gel y arte pintado a mano, hecho con calma y a tu medida.": [
+      "Manicure, pedicure, lashes and brows in a small studio in Lloret de Mar. Rubber base, gel and hand-painted nail art, unhurried and tailored to you.",
+      "Manucure, pédicure, cils et sourcils dans un petit studio à Lloret de Mar. Base rubber, gel et nail art peint à la main, sans précipitation et sur mesure."],
+    "Ver el muestrario": ["See the gallery", "Voir la galerie"],
+    "semipermanente · base rubber": ["gel polish · rubber base", "semi-permanent · base rubber"],
+    // services fan
+    "Carta de servicios": ["Service menu", "Carte des soins"],
+    "Abre el abanico.": ["Open the fan.", "Ouvrez l'éventail."],
+    "Elige tu tono.": ["Pick your shade.", "Choisissez votre teinte."],
+    "Cada lámina es un servicio del estudio. Tócala para ver qué incluye y pide tu cita desde aquí mismo.": [
+      "Each swatch is one of our services. Tap it to see what's included and book right from here.",
+      "Chaque lame est un soin du studio. Touchez-la pour voir ce qu'il comprend et réservez directement d'ici."],
+    "Manicura": ["Manicure", "Manucure"],
+    "Semi rubber": ["Gel polish", "Semi rubber"],
+    "Extensiones": ["Extensions", "Extensions"],
+    "Pedicura": ["Pedicure", "Pédicure"],
+    "Lifting": ["Lash lift", "Cils"],
+    "Cejas": ["Brows", "Sourcils"],
+    "Nº 01 · Manos": ["Nº 01 · Hands", "Nº 01 · Mains"],
+    "Nº 02 · Manos": ["Nº 02 · Hands", "Nº 02 · Mains"],
+    "Nº 03 · Manos": ["Nº 03 · Hands", "Nº 03 · Mains"],
+    "Nº 04 · Detalle": ["Nº 04 · Detail", "Nº 04 · Détail"],
+    "Nº 05 · Pies": ["Nº 05 · Feet", "Nº 05 · Pieds"],
+    "Nº 06 · Mirada": ["Nº 06 · Eyes", "Nº 06 · Regard"],
+    "Nº 07 · Mirada": ["Nº 07 · Eyes", "Nº 07 · Regard"],
+    "Limado, forma y cuidado de cutícula para unas manos impecables. Es la base de todo lo demás, también si solo quieres llevarlas bonitas y naturales.": [
+      "Filing, shaping and cuticle care for flawless hands. It's the base for everything else, and perfect if you simply want them neat and natural.",
+      "Limage, mise en forme et soin des cuticules pour des mains impeccables. C'est la base de tout le reste, même si vous voulez simplement des ongles jolis et naturels."],
+    "Forma a tu gusto: almendra, oval, redonda o cuadrada": ["Your choice of shape: almond, oval, round or square", "La forme de votre choix : amande, ovale, ronde ou carrée"],
+    "Cuidado de cutículas": ["Cuticle care", "Soin des cuticules"],
+    "Acabado en esmalte o semipermanente": ["Finished with regular or gel polish", "Finition vernis classique ou semi-permanent"],
+    "Pedir cita · Manicura": ["Book · Manicure", "Réserver · Manucure"],
+    "¡Hola Melanie! Me gustaría pedir cita para una manicura.": ["Hi Melanie! I'd like to book a manicure.", "Bonjour Melanie ! J'aimerais prendre rendez-vous pour une manucure."],
+    "Semipermanente con base rubber": ["Gel polish with rubber base", "Semi-permanent avec base rubber"],
+    "La base rubber nivela la uña y le da cuerpo, así el color queda liso y uniforme y la uña natural está más protegida en el día a día.": [
+      "The rubber base levels the nail and adds strength, so the colour sits smooth and even and your natural nail is better protected day to day.",
+      "La base rubber nivelle l'ongle et lui donne du corps : la couleur est lisse et uniforme, et l'ongle naturel mieux protégé au quotidien."],
+    "Refuerza uñas finas o que se rompen": ["Strengthens thin or brittle nails", "Renforce les ongles fins ou cassants"],
+    "Acabado brillante y uniforme": ["Glossy, even finish", "Finition brillante et uniforme"],
+    "Cualquier tono: del milky al burdeos": ["Any shade, from milky to burgundy", "Toutes les teintes, du milky au bordeaux"],
+    "Pedir cita · Semipermanente": ["Book · Gel polish", "Réserver · Semi-permanent"],
+    "¡Hola Melanie! Me gustaría pedir cita para semipermanente con base rubber.": ["Hi Melanie! I'd like to book gel polish with rubber base.", "Bonjour Melanie ! J'aimerais prendre rendez-vous pour un semi-permanent avec base rubber."],
+    "Extensiones de gel": ["Gel extensions", "Extensions en gel"],
+    "Largo y forma a medida, construidos en gel. Desde un almendra discreto hasta algo más atrevido, siempre proporcionado a tu mano.": [
+      "Length and shape made to measure, built in gel. From a subtle almond to something bolder, always in proportion to your hand.",
+      "Longueur et forme sur mesure, construites en gel. D'une amande discrète à quelque chose de plus audacieux, toujours proportionné à votre main."],
+    "Forma y largo personalizados": ["Custom shape and length", "Forme et longueur personnalisées"],
+    "Acabado natural, ombré o con diseño": ["Natural, ombré or designed finish", "Finition naturelle, ombrée ou avec motif"],
+    "Pregunta por el mantenimiento": ["Ask about maintenance", "Renseignez-vous sur l'entretien"],
+    "Pedir cita · Extensiones": ["Book · Extensions", "Réserver · Extensions"],
+    "¡Hola Melanie! Me gustaría pedir cita para extensiones de gel.": ["Hi Melanie! I'd like to book gel extensions.", "Bonjour Melanie ! J'aimerais prendre rendez-vous pour des extensions en gel."],
+    "Nail art a mano": ["Hand-painted nail art", "Nail art à la main"],
+    "El detalle que convierte una manicura en tuya: francesa de color, baby boomer, pan de oro, efecto mármol o flores pintadas a pincel.": [
+      "The detail that makes a manicure yours: coloured French, baby boomer, gold leaf, marble effect or brush-painted flowers.",
+      "Le détail qui rend une manucure unique : french colorée, baby boomer, feuille d'or, effet marbre ou fleurs peintes au pinceau."],
+    "Francesa fina en cualquier color": ["Fine French tips in any colour", "French fine dans toutes les couleurs"],
+    "Degradados baby boomer y ombré": ["Baby boomer and ombré gradients", "Dégradés baby boomer et ombré"],
+    "Lámina de oro, mármol y dibujos a mano": ["Gold leaf, marble and hand-drawn designs", "Feuille d'or, marbre et dessins à la main"],
+    "Pedir cita · Nail art": ["Book · Nail art", "Réserver · Nail art"],
+    "¡Hola Melanie! Me gustaría pedir cita para un diseño de nail art.": ["Hi Melanie! I'd like to book a nail art design.", "Bonjour Melanie ! J'aimerais prendre rendez-vous pour un nail art."],
+    "Pies cuidados y uñas perfectas para sandalias, playa y verano en la Costa Brava, o simplemente para sentirte bien.": [
+      "Cared-for feet and perfect toenails for sandals, beach days and summer on the Costa Brava, or simply to feel good.",
+      "Des pieds soignés et des ongles parfaits pour les sandales, la plage et l'été sur la Costa Brava, ou simplement pour se sentir bien."],
+    "Limado, forma y cutículas": ["Filing, shaping and cuticles", "Limage, forme et cuticules"],
+    "Esmalte o semipermanente": ["Regular or gel polish", "Vernis classique ou semi-permanent"],
+    "Listos para ir descalza": ["Ready to go barefoot", "Prêts à marcher pieds nus"],
+    "Pedir cita · Pedicura": ["Book · Pedicure", "Réserver · Pédicure"],
+    "¡Hola Melanie! Me gustaría pedir cita para una pedicura.": ["Hi Melanie! I'd like to book a pedicure.", "Bonjour Melanie ! J'aimerais prendre rendez-vous pour une pédicure."],
+    "Lifting de pestañas": ["Lash lift", "Rehaussement de cils"],
+    "Curva y elevación para tus pestañas naturales, sin extensiones. Mirada abierta desde que te levantas, sin pelearte con el rizador.": [
+      "Curl and lift for your natural lashes, no extensions. Wide-open eyes from the moment you wake up, no lash curler needed.",
+      "Courbe et volume pour vos cils naturels, sans extensions. Un regard ouvert dès le réveil, sans recourbe-cils."],
+    "Con tus propias pestañas": ["Using your own lashes", "Avec vos propres cils"],
+    "Efecto natural y abierto": ["Natural, open look", "Effet naturel, regard ouvert"],
+    "Combínalo con la laminación de cejas": ["Pair it with a brow lamination", "À combiner avec la lamination des sourcils"],
+    "Pedir cita · Lifting": ["Book · Lash lift", "Réserver · Cils"],
+    "¡Hola Melanie! Me gustaría pedir cita para un lifting de pestañas.": ["Hi Melanie! I'd like to book a lash lift.", "Bonjour Melanie ! J'aimerais prendre rendez-vous pour un rehaussement de cils."],
+    "Laminación de cejas": ["Brow lamination", "Lamination des sourcils"],
+    "Cejas peinadas, ordenadas y con más cuerpo. Fijamos el vello en la dirección que mejor enmarca tu cara.": [
+      "Brushed, tidy brows with more body. We set the hairs in the direction that best frames your face.",
+      "Des sourcils disciplinés, nets et plus fournis. Nous fixons les poils dans la direction qui encadre le mieux votre visage."],
+    "Efecto ceja más poblada": ["Fuller-looking brows", "Effet sourcils plus fournis"],
+    "Forma limpia y ordenada": ["Clean, neat shape", "Forme nette et ordonnée"],
+    "Combínala con el lifting de pestañas": ["Pair it with a lash lift", "À combiner avec le rehaussement de cils"],
+    "Pedir cita · Cejas": ["Book · Brows", "Réserver · Sourcils"],
+    "¡Hola Melanie! Me gustaría pedir cita para una laminación de cejas.": ["Hi Melanie! I'd like to book a brow lamination.", "Bonjour Melanie ! J'aimerais prendre rendez-vous pour une lamination des sourcils."],
+    // gallery
+    "Míralas de cerca.": ["Take a closer look.", "Regardez de près."],
+    "Trabajos reales salidos del estudio. Pasa el cursor por encima de una foto para verla con lupa, o tócala para abrirla en grande.": [
+      "Real work straight from the studio. Hover over a photo to see it through the magnifier, or tap it to open it full size.",
+      "De vraies réalisations du studio. Survolez une photo pour la voir à la loupe, ou touchez-la pour l'agrandir."],
+    "diseños": ["designs", "créations"],
+    "Filtrar por estilo": ["Filter by style", "Filtrer par style"],
+    "Todo": ["All", "Tout"],
+    "Intensos": ["Bold", "Intenses"],
+    "Arte a mano": ["Hand-painted", "Peint à la main"],
+    "Mirada": ["Lashes", "Regard"],
+    "Baby boomer rosa": ["Pink baby boomer", "Baby boomer rose"],
+    "Degradado de blanco lechoso a rosa sobre uñas almendra. Elegante, luminoso y combina con todo.": ["A milky-white to pink gradient on almond nails. Elegant, luminous and goes with everything.", "Dégradé du blanc laiteux au rose sur ongles amande. Élégant, lumineux et assorti à tout."],
+    "Uñas almendra con degradado baby boomer de blanco lechoso a rosa": ["Almond nails with a milky-white to pink baby boomer gradient", "Ongles amande avec dégradé baby boomer du blanc laiteux au rose"],
+    "Francesa verde botella": ["Bottle-green French", "French vert bouteille"],
+    "Francesa verde": ["Green French", "French verte"],
+    "Francesa con una línea finísima verde botella sobre base nude. Clásica, pero con un giro.": ["A French manicure with an ultra-fine bottle-green line on a nude base. Classic, with a twist.", "French avec une ligne ultra-fine vert bouteille sur base nude. Classique, avec une touche en plus."],
+    "Manicura francesa con línea fina verde botella sobre base nude": ["French manicure with a fine bottle-green line on a nude base", "Manucure french avec une ligne fine vert bouteille sur base nude"],
+    "Burdeos con flor": ["Burgundy with a flower", "Bordeaux et fleur"],
+    "Uñas cortas en burdeos profundo con una flor pintada a pincel en el anular.": ["Short nails in deep burgundy with a brush-painted flower on the ring finger.", "Ongles courts bordeaux profond avec une fleur peinte au pinceau sur l'annulaire."],
+    "Uñas cortas color burdeos con una flor pintada a mano en el anular": ["Short burgundy nails with a hand-painted flower on the ring finger", "Ongles courts bordeaux avec une fleur peinte à la main sur l'annulaire"],
+    "Nude con pan de oro": ["Nude with gold leaf", "Nude et feuille d'or"],
+    "Base nude rosada con lámina de pan de oro en las puntas. Brillo justo, nada recargado.": ["A rosy nude base with gold leaf on the tips. Just enough shine, never overdone.", "Base nude rosée avec feuille d'or sur les pointes. Juste ce qu'il faut d'éclat, sans excès."],
+    "Uñas nude con lámina de pan de oro en las puntas": ["Nude nails with gold leaf on the tips", "Ongles nude avec feuille d'or sur les pointes"],
+    "Lila lechoso": ["Milky lilac", "Lilas laiteux"],
+    "Uñas cortas en lila lechoso con brillo espejo. Un pastel suave para todos los días.": ["Short nails in milky lilac with a mirror shine. A soft pastel for every day.", "Ongles courts lilas laiteux, brillance miroir. Un pastel doux pour tous les jours."],
+    "Uñas cortas en lila lechoso brillante": ["Short glossy milky-lilac nails", "Ongles courts lilas laiteux brillants"],
+    "El tono que más se pide: nude lechoso y rosado, efecto uña sana y cuidada.": ["Our most requested shade: a milky, rosy nude for a healthy, well-kept look.", "La teinte la plus demandée : un nude laiteux et rosé, effet ongle sain et soigné."],
+    "Uñas almendra en nude lechoso rosado": ["Almond nails in a milky rosy nude", "Ongles amande nude laiteux rosé"],
+    "Cereza aura": ["Cherry aura", "Aura cerise"],
+    "Almendra larga con degradado cereza y un toque de brillo. Para cuando apetece color de verdad.": ["Long almond nails with a cherry gradient and a touch of sparkle. For when you want real colour.", "Amande longue avec dégradé cerise et une touche de paillettes. Pour les jours où l'on a envie de vraie couleur."],
+    "Uñas almendra largas con degradado color cereza y brillo": ["Long almond nails with a sparkly cherry gradient", "Ongles amande longs avec dégradé cerise pailleté"],
+    "Ombré ciruela": ["Plum ombré", "Ombré prune"],
+    "Degradado de blanco a ciruela sobre almendra. Contraste suave con mucho carácter.": ["A white-to-plum gradient on almond nails. Soft contrast, lots of character.", "Dégradé du blanc au prune sur ongles amande. Contraste doux, beaucoup de caractère."],
+    "Uñas almendra con degradado de blanco a ciruela": ["Almond nails with a white-to-plum gradient", "Ongles amande avec dégradé du blanc au prune"],
+    "Pestañas naturales elevadas y curvadas, sin extensiones.": ["Natural lashes lifted and curled, no extensions.", "Cils naturels rehaussés et recourbés, sans extensions."],
+    "Primer plano de pestañas naturales con lifting": ["Close-up of natural lashes after a lash lift", "Gros plan de cils naturels après un rehaussement"],
+    "Mármol menta y oro": ["Mint marble and gold", "Marbre menthe et or"],
+    "Verde menta con vetas efecto mármol y escamas de oro. Fresco y muy de verano.": ["Mint green with marble veins and gold flakes. Fresh and very summery.", "Vert menthe avec veines effet marbre et paillettes d'or. Frais et très estival."],
+    "Uñas verde menta con efecto mármol y lámina de oro": ["Mint-green marble-effect nails with gold leaf", "Ongles vert menthe effet marbre avec feuille d'or"],
+    "Rosa empolvado y oro": ["Dusty pink and gold", "Rose poudré et or"],
+    "Rosa y oro": ["Pink and gold", "Rose et or"],
+    "Rosa empolvado con un detalle dorado pintado en el anular.": ["Dusty pink with a painted gold detail on the ring finger.", "Rose poudré avec un détail doré peint sur l'annulaire."],
+    "Uñas rosa empolvado con un detalle dorado en el anular": ["Dusty-pink nails with a gold detail on the ring finger", "Ongles rose poudré avec un détail doré sur l'annulaire"],
+    "Nude natural": ["Natural nude", "Nude naturel"],
+    "Uñas cortas en nude natural: discretas, limpias y siempre perfectas.": ["Short nails in a natural nude: discreet, clean and always flawless.", "Ongles courts nude naturel : discrets, nets et toujours parfaits."],
+    "Uñas cortas en tono nude natural": ["Short nails in a natural nude shade", "Ongles courts teinte nude naturel"],
+    // lightbox
+    "Diseño ampliado": ["Enlarged design", "Création agrandie"],
+    "Arrastra sobre la foto para mirarla con lupa.": ["Drag over the photo to look through the magnifier.", "Glissez sur la photo pour la regarder à la loupe."],
+    "Quiero este diseño": ["I want this design", "Je veux cette création"],
+    "Diseño anterior": ["Previous design", "Création précédente"],
+    "Diseño siguiente": ["Next design", "Création suivante"],
+    "Cerrar": ["Close", "Fermer"],
+    // layer by layer
+    "Ilustración de una uña que se completa capa a capa": ["Illustration of a nail being built up layer by layer", "Illustration d'un ongle qui se construit couche par couche"],
+    "Uña natural": ["Natural nail", "Ongle naturel"],
+    "Base rubber": ["Rubber base", "Base rubber"],
+    "Color": ["Colour", "Couleur"],
+    "Lo que pasa en tu uña durante la cita.": ["What happens to your nail during your appointment.", "Ce qui se passe sur votre ongle pendant le rendez-vous."],
+    "Baja despacio: en cada paso la uña de la ilustración gana una capa, igual que la tuya en el estudio.": [
+      "Scroll slowly: at each step the illustrated nail gains a layer, just like yours in the studio.",
+      "Descendez doucement : à chaque étape, l'ongle de l'illustration gagne une couche, comme le vôtre au studio."],
+    "Preparación": ["Prep", "Préparation"],
+    "Retiramos con cuidado la cutícula, limamos y damos forma. Una uña bien preparada es la mitad del resultado: por eso no hay prisa en este paso.": [
+      "We gently remove the cuticle, file and shape. A well-prepped nail is half the result, which is why we never rush this step.",
+      "Nous retirons délicatement la cuticule, limons et donnons la forme. Un ongle bien préparé, c'est la moitié du résultat : pas de précipitation à cette étape."],
+    "Forma · cutícula · limpieza": ["Shape · cuticle · cleanse", "Forme · cuticule · nettoyage"],
+    "Una base flexible que nivela la superficie y refuerza la uña natural. Es el secreto para que el color quede liso y la manicura aguante.": [
+      "A flexible base that levels the surface and strengthens the natural nail. It's the secret to smooth colour and a manicure that lasts.",
+      "Une base souple qui nivelle la surface et renforce l'ongle naturel. Le secret d'une couleur lisse et d'une manucure qui tient."],
+    "Nivela · refuerza · protege": ["Levels · strengthens · protects", "Nivelle · renforce · protège"],
+    "Capas finas de tu tono, curadas en lámpara una a una. Del milky más suave al burdeos más profundo, o un degradado entre los dos.": [
+      "Thin coats of your shade, each one cured under the lamp. From the softest milky to the deepest burgundy, or a gradient in between.",
+      "De fines couches de votre teinte, catalysées une à une sous la lampe. Du milky le plus doux au bordeaux le plus profond, ou un dégradé entre les deux."],
+    "Tono · cobertura · degradado": ["Shade · coverage · gradient", "Teinte · couvrance · dégradé"],
+    "Top y brillo": ["Top coat & shine", "Top coat et brillance"],
+    "Sellamos con top coat para un acabado espejo. Si te apetece, aquí entra el arte: pan de oro, francesa, mármol o una flor a pincel.": [
+      "We seal with a top coat for a mirror finish. If you fancy it, this is where the art comes in: gold leaf, French, marble or a brush-painted flower.",
+      "Nous scellons avec un top coat pour une finition miroir. Si vous le souhaitez, c'est ici qu'entre l'art : feuille d'or, french, marbre ou une fleur au pinceau."],
+    "Sellado · brillo · arte": ["Seal · shine · art", "Scellage · brillance · art"],
+    // visit
+    "Escríbenos por WhatsApp, cuéntanos qué te apetece (forma, color, una foto de inspiración) y te proponemos día y hora.": [
+      "Message us on WhatsApp, tell us what you have in mind (shape, colour, an inspiration photo) and we'll suggest a day and time.",
+      "Écrivez-nous sur WhatsApp, dites-nous ce qui vous ferait envie (forme, couleur, une photo d'inspiration) et nous vous proposerons un jour et une heure."],
+    "WhatsApp · citas": ["WhatsApp · bookings", "WhatsApp · rendez-vous"],
+    "Instagram · últimos trabajos": ["Instagram · latest work", "Instagram · dernières créations"],
+    "Cómo llegar": ["Get directions", "Itinéraire"],
+    "Escribir a Melanie": ["Message Melanie", "Écrire à Melanie"],
+    "Mapa: Melanie.Art en Carrer del Carme 10, Lloret de Mar": ["Map: Melanie.Art at Carrer del Carme 10, Lloret de Mar", "Carte : Melanie.Art au Carrer del Carme 10, Lloret de Mar"],
+    "Pedir cita por WhatsApp": ["Book on WhatsApp", "Réserver sur WhatsApp"]
+  };
+  const LANGS = ['es', 'en', 'fr'];
+  tr = (s) => (lang === 'es' || !I18N[s]) ? s : I18N[s][lang === 'en' ? 0 : 1];
+
+  // remember every translatable text node / attribute with its Spanish source
+  const textNodes = [], attrNodes = [];
+  const walker = d.createTreeWalker(d.body, NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => n.parentElement.closest('script, style') ? NodeFilter.FILTER_REJECT
+      : (I18N[n.nodeValue.trim()] ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP)
+  });
+  while (walker.nextNode()) {
+    const n = walker.currentNode, raw = n.nodeValue;
+    textNodes.push({ n, key: raw.trim(), lead: raw.match(/^\s*/)[0], trail: raw.match(/\s*$/)[0] });
+  }
+  const ATTRS = ['alt', 'aria-label', 'title', 'data-name', 'data-desc', 'data-wa'];
+  d.querySelectorAll(ATTRS.map(a => `[${a}]`).join(',')).forEach(el => ATTRS.forEach(a => {
+    const v = el.getAttribute(a);
+    if (v && I18N[v.trim()]) attrNodes.push({ el, a, key: v.trim() });
+  }));
+
+  const metaDesc = d.querySelector('meta[name="description"]');
+  const langWrap = d.getElementById('lang');
+  const langBtn = langWrap.querySelector('.lang-btn');
+  const langMenu = d.getElementById('langMenu');
+  const langCur = langWrap.querySelector('.lang-cur');
+  const langOpts = [...langMenu.querySelectorAll('[data-lang]')];
+
+  const setLang = (l, save) => {
+    lang = l;
+    textNodes.forEach(t => { t.n.nodeValue = t.lead + tr(t.key) + t.trail; });
+    attrNodes.forEach(t => t.el.setAttribute(t.a, tr(t.key)));
+    root.lang = l;
+    d.title = UI[l].title;
+    if (metaDesc) metaDesc.setAttribute('content', UI[l].desc);
+    applyWa();
+    labelShots();
+    menuBtn.setAttribute('aria-label', d.body.classList.contains('menu-open') ? UI[l].menuClose : UI[l].menuOpen);
+    langCur.textContent = l.toUpperCase();
+    langBtn.setAttribute('aria-label', UI[l].langLabel);
+    langOpts.forEach(b => b.setAttribute('aria-current', b.dataset.lang === l));
+    if (lb.open) { const v = visibleTiles(); if (v[lbIndex]) fillLb(v[lbIndex]); }
+    if (save) { try { localStorage.setItem('melanie-lang', l); } catch (e) {} }
+  };
+
+  const pickLang = () => {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (LANGS.includes(q)) return q;
+    try { const s = localStorage.getItem('melanie-lang'); if (LANGS.includes(s)) return s; } catch (e) {}
+    const prefs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'es']);
+    for (const p of prefs) {
+      const c = String(p).toLowerCase().slice(0, 2);
+      if (c === 'fr' || c === 'en') return c;
+      if (['es', 'ca', 'gl', 'eu'].includes(c)) return 'es';
+    }
+    return 'en';
+  };
+  setLang(pickLang(), false);
+
+  const toggleLang = (open) => {
+    langMenu.hidden = !open;
+    langBtn.setAttribute('aria-expanded', open);
+    if (open) (langOpts.find(b => b.dataset.lang === lang) || langOpts[0]).focus();
+  };
+  langBtn.addEventListener('click', () => toggleLang(langMenu.hidden));
+  langOpts.forEach(b => b.addEventListener('click', () => { setLang(b.dataset.lang, true); toggleLang(false); langBtn.focus(); }));
+  d.addEventListener('click', (e) => { if (!langMenu.hidden && !langWrap.contains(e.target)) toggleLang(false); });
+  langWrap.addEventListener('keydown', (e) => {
+    if (langMenu.hidden) return;
+    const i = langOpts.indexOf(d.activeElement);
+    if (e.key === 'Escape') { toggleLang(false); langBtn.focus(); }
+    if (e.key === 'ArrowDown') { e.preventDefault(); langOpts[(i + 1) % langOpts.length].focus(); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); langOpts[(i - 1 + langOpts.length) % langOpts.length].focus(); }
+  });
 
   /* ---------- liquid satin (WebGL) ---------- */
   const cv = d.getElementById('satin');
